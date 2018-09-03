@@ -4,8 +4,16 @@
 
 {% block body %}
 <div class="col-sm-12">
-    {% for event in event_list %}
-    <h1>{{event.title}}</h1>
+    <!--<h1>{{event_entries}}</h1>-->
+    
+    {% for event in event_entries %}
+    <h4>{{event.event.title}}</h4>
+    <h5>{{event.event.start_time}} - {{event.event.end_time}}</h5>
+    <!--<h5></h5>-->
     {% endfor %}
+    
+    
+    
+    
 </div>
 {% endblock %}

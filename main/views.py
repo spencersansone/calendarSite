@@ -3,6 +3,7 @@ from .models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
+from datetime import datetime
 
 def getTodayDateTime():
     return datetime.now()
@@ -114,12 +115,32 @@ def add_event(request):
         
     return render(request, 'main/add_event.html')
     
-# def today_agenda(request):
-#     today = getTodayDateTime()
-#     today_weekday = getWeekdayArray()[today.weekday()]
-#     query1 = Q(**{today_weekday: True})
-#     query2 = Q(date=today)
-#     today_events = Event.objects.filter( query1 | query2 )
+def today_agenda(request):
+    today = getTodayDateTime()
+    today_weekday = getWeekdayArray()[today.weekday()]
+    query1 = Q(**{today_weekday: True})
+    query2 = Q(start_date=today)
+    today_events = Event.objects.filter( query1 | query2 )
     
+    for event in today_events:
+        event_entries = EventEntry.objects.filter(
+            event = event,
+            datetime_created__year = today.year,
+            datetime_created__month = today.month,
+            datetime_created__day = today.day)
+        
+        if len(event_entries) == 0:
+            event_entry = EventEntry.objects.create(
+                event = event,
+                datetime_created = today,
+                completed = False)
+    
+    x = {}
+    x['event_entries'] = EventEntry.objects.filter(
+        datetime_created__year = today.year,
+        datetime_created__month = today.month,
+        datetime_created__day = today.day).order_by('event__start_time')
+    
+    return render(request, 'main/today_agenda.html', x)
 
 # Create your views here.
