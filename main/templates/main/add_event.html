@@ -5,8 +5,6 @@
 {% block body %}
 <script type="text/javascript">
     $(function() {
-        // $.browser.device = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
-        
         var is_mobile = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
         if (is_mobile){
             $('#start_time_form').append('<label for="start_time">Start Time:</label><input type="time" class="form-control" name="start_time" id="start_time">')
@@ -17,6 +15,18 @@
             $('#start_time').timepicker();
             $('#end_time').timepicker();
         }
+        $("#yes_repeat").change(function () {
+            $('#no_repeat').prop('checked', false);
+            $("#yes_repeat").parent().removeClass('btn-secondary').addClass('btn-success')
+            $('#repeat_div').show()
+            $('#no_repeat').parent().removeClass('btn-danger').addClass('btn-secondary')
+        });
+        $("#no_repeat").change(function () {
+            $('#yes_repeat').prop('checked', false);
+            $("#no_repeat").parent().removeClass('btn-secondary').addClass('btn-danger')
+            $('#repeat_div').hide()
+            $('#yes_repeat').parent().removeClass('btn-success').addClass('btn-secondary')
+        });
     });
 </script>
 
@@ -55,7 +65,65 @@
         <div class="form-group" id="end_time_form">
         </div>
         
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="form-group">
+            <label>Repeat Event? </label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-danger">
+                <input type="radio" name="no_repeat" id="no_repeat" autocomplete="off" checked> No
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="yes_repeat" id="yes_repeat" autocomplete="off"> Yes
+              </label>
+            </div>
+        </div>
+        
+        <div class="form-group form-check" id="repeat_div" style="display: none;">
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="sunday" name="sunday">
+                <label class="form-check-label" for="sunday">Sunday</label>
+                <br>
+                <input type="checkbox" class="form-check-input" id="monday" name="monday">
+                <label class="form-check-label" for="monday">Monday</label>
+                <br>
+                <input type="checkbox" class="form-check-input" id="tuesday" name="tuesday">
+                <label class="form-check-label" for="tuesday">Tuesday</label>
+                <br>
+                <input type="checkbox" class="form-check-input" id="wednesday" name="wednesday">
+                <label class="form-check-label" for="wednesday">Wednesday</label>
+                <br>
+                <input type="checkbox" class="form-check-input" id="thursday" name="thursday">
+                <label class="form-check-label" for="thursday">Thursday</label>
+                <br>
+                <input type="checkbox" class="form-check-input" id="friday" name="friday">
+                <label class="form-check-label" for="friday">Friday</label>
+                <br>
+                <input type="checkbox" class="form-check-input" id="saturday" name="saturday">
+                <label class="form-check-label" for="saturday">Saturday</label>
+                <br>
+                <br>
+                <input type="checkbox" class="form-check-input" id="every_day">
+                <label class="form-check-label" for="every_day">Every Day</label>
+            </div>
+        </div>
+        
+        
+        <!--<div class="form-group">-->
+        <!--    <div class="btn-group btn-group-toggle" data-toggle="buttons">-->
+        <!--        <label class="btn btn-secondary">-->
+        <!--            <input type="radio" name="routine_option" id="routine_option" autocomplete="off"> Routine-->
+        <!--        </label>-->
+        <!--        <label class="btn btn-secondary">-->
+        <!--            <input type="radio" name="certain_due_date_option" id="certain_due_date_option" autocomplete="off"> One-Time-->
+        <!--        </label>-->
+        <!--    </div>-->
+        <!--</div>-->
+        
+        
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        
+        
     </form>
 </div>
 {% endblock %}
