@@ -1,0 +1,61 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Events{% endblock %}
+
+{% block body %}
+<script type="text/javascript">
+    $(function() {
+        // $.browser.device = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+        
+        var is_mobile = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+        if (is_mobile){
+            $('#start_time_form').append('<label for="start_time">Start Time:</label><input type="time" class="form-control" name="start_time" id="start_time">')
+            $('#end_time_form').append('<label for="end_time">End Time:</label><input type="time" class="form-control" name="end_time" id="end_time">')
+        } else {
+            $('#start_time_form').append('<label for="start_time">Start Time:</label><input type="text" class="form-control timepicker" name="start_time" id="start_time">')
+            $('#end_time_form').append('<label for="end_time">End Time:</label><input type="text" class="form-control timepicker" name="end_time" id="end_time">')
+            $('#start_time').timepicker();
+            $('#end_time').timepicker();
+        }
+    });
+</script>
+
+<div class="col-sm-12">
+    <form role="form" action="{% url 'main:add_event' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" name="title" placeholder="Enter title">
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" name="description" rows="3" placeholder="Enter description"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" class="form-control" name="location" placeholder="Enter location">
+        </div>
+
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            <input type="date" class="form-control" name="start_date">
+        </div>
+        
+        <div class="form-group" id="start_time_form">
+        </div>
+        
+        <div class="form-group">
+            <label for="end_date">End Date:</label>
+            <input type="date" class="form-control" name="end_date">
+        </div>
+        
+        <div class="form-group" id="end_time_form">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
