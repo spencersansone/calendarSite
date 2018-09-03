@@ -17,5 +17,9 @@ class Event(models.Model):
     friday = models.BooleanField()
     saturday = models.BooleanField()
     
+class EventEntry(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    datetime_created = models.DateTimeField()
+    completed = models.BooleanField()
 
 # Create your models here.
