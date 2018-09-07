@@ -4,13 +4,24 @@
 
 {% block body %}
 <div class="col-sm-12">
-    {% for event in event_entries %}
-    <h4>{{event.event.title}}</h4>
-        {% if event.event.end_time == event.event.start_time %}
-        <h5>{{event.event.start_time}}</h5>
-        {% else %}
-        <h5>{{event.event.start_time}} - {{event.event.end_time}}</h5>
-        {% endif %}
-    {% endfor %}
+    <a href="{% url 'main:add_event' %}"><h1>Add Event</h1></a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_entries %}
+            <tr>
+                <td>{{event.event.title}}</td>
+                <td>{{event.event.start_time}}</td>
+                <td>{{event.event.end_time}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
