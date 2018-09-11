@@ -19,6 +19,7 @@ class Event(models.Model):
     
 class EventEntry(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    start_date = models.DateField()
     datetime_created = models.DateTimeField()
     completed = models.BooleanField()
 

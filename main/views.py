@@ -3,10 +3,13 @@ from .models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 def getTodayDateTime():
     return datetime.now()
+
+def getTodayDate():
+    return date.today()
     
 def getWeekdayArray():
     return ["monday",
@@ -45,8 +48,8 @@ def add_event(request):
             elif meridiem == "pm":
                 if hour != "12":
                     hour = "{}".format(int(hour) + 12)
-            print("{}:{}".format(hour,minute))
             return "{}:{}".format(hour,minute)
+        return var
     
     
     
@@ -61,10 +64,12 @@ def add_event(request):
         print(s_d)
         s_t = request.POST.get('start_time')
         print(s_t)
+        print("{} CLEAN start".format(sanitize_time(s_t)))
         e_d = request.POST.get('end_date')
         print(e_d)
         e_t = request.POST.get('end_time')
         print(e_t)
+        print("{} CLEAN end".format(sanitize_time(e_t)))
         no_repeat = True if request.POST.get('no_repeat') == "on" else False
         print("no rep?")
         print(no_repeat)
@@ -116,6 +121,9 @@ def add_event(request):
     return render(request, 'main/add_event.html')
     
 def today_agenda(request):
+    
+
+
     today = getTodayDateTime()
     today_weekday = getWeekdayArray()[today.weekday()]
     query1 = Q(**{today_weekday: True})
@@ -123,23 +131,73 @@ def today_agenda(request):
     today_events = Event.objects.filter( query1 | query2 )
     
     for event in today_events:
-        event_entries = EventEntry.objects.filter(
+        today_event_entries = EventEntry.objects.filter(
             event = event,
             datetime_created__year = today.year,
             datetime_created__month = today.month,
             datetime_created__day = today.day)
         
-        if len(event_entries) == 0:
+        if len(today_event_entries) == 0:
             event_entry = EventEntry.objects.create(
                 event = event,
                 datetime_created = today,
-                completed = False)
+                completed = False,
+                start_date = today)
+                
+    routine_events = Event.objects.filter(repeat_event=True)
     
+
+    
+    t = getTodayDate()
+    x = t - timedelta(days=365)
+    dates = []
+    while x <= t:
+        dates += [x]
+        x += timedelta(days=1)
+        
+    all_event_entries = EventEntry.objects.all()
+    for event in routine_events:
+        weekday_list = []
+        
+        if event.monday:
+            weekday_list += [0]
+        if event.tuesday:
+            weekday_list += [1]
+        if event.wednesday:
+            weekday_list += [2]
+        if event.thursday:
+            weekday_list += [3]
+        if event.friday:
+            weekday_list += [4]
+        if event.saturday:
+            weekday_list += [5]
+        if event.sunday:
+            weekday_list += [6]
+        relevant_dates = []
+        for date in dates:
+            if date.weekday() in weekday_list:
+                same_entries = all_event_entries.filter(
+                    event = event,
+                    start_date = date)
+                if len(same_entries) == 0:
+                    EventEntry.objects.create(
+                        event = event,
+                        datetime_created = today,
+                        completed = False,
+                        start_date = date)
+        print(relevant_dates)
+            
+        
+
+
+
     x = {}
+    # x['event_entries'] = EventEntry.objects.filter(
+    #     datetime_created__year = today.year,
+    #     datetime_created__month = today.month,
+    #     datetime_created__day = today.day).order_by('event__start_time')
     x['event_entries'] = EventEntry.objects.filter(
-        datetime_created__year = today.year,
-        datetime_created__month = today.month,
-        datetime_created__day = today.day).order_by('event__start_time')
+        start_date = today).order_by('event__start_time')
     
     return render(request, 'main/today_agenda.html', x)
 
