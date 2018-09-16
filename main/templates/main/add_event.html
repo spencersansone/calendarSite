@@ -41,6 +41,51 @@
             $('#repeat_div').hide()
             $('#yes_repeat').parent().removeClass('btn-success').addClass('btn-secondary')
         });
+        
+        $("#start_time").change(function () {
+            if(is_mobile){
+                var start_time = $(this).val();
+                var start_time_split = start_time.split(':');
+                var start_time_hour = parseInt(start_time_split[0]);
+                var start_time_minute = start_time_split[1];
+                var end_time_hour = (start_time_hour + 1) % 24;
+                if (end_time_hour == 0){
+                    end_time_hour = "00";
+                }
+                var end_time = end_time_hour + ":" + start_time_minute;
+                alert(end_time)
+                $('#end_time').val(end_time);
+            } else {
+                var start_time = $(this).val();
+                var start_time_split = start_time.split(":");
+                var start_time_hour = parseInt(start_time_split[0]);
+                var start_time_minute = start_time_split[1].substring(0,2);
+                var start_time_meridiem = start_time_split[1].substring(2,4);
+                var end_time_hour = (start_time_hour + 1) % 12;
+                
+                if (end_time_hour == 0){
+                    end_time_hour = 12;
+                }
+                
+                if (end_time_hour > 11){
+                    if(start_time_meridiem == "am"){
+                        var end_time_meridiem = "pm"   
+                    } else if (start_time_meridiem == "pm") {
+                        var end_time_meridiem = "am"
+                    }
+                } else {
+                    end_time_meridiem = start_time_meridiem
+                }
+                
+                end_time = end_time_hour + ":" + start_time_minute + end_time_meridiem;
+                $('#end_time').val(end_time);
+            }
+        });
+        $("#start_date").change(function () {
+            $("#end_date").val($(this).val());
+        });
+        
+        
         // $("#start_time").change(function () {
             
         //     if (is_mobile){
