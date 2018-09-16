@@ -200,5 +200,13 @@ def today_agenda(request):
         start_date = today).order_by('event__start_time')
     
     return render(request, 'main/today_agenda.html', x)
+    
+def event_entry_detail(request, pk):
+    
+    certain_event_entry = EventEntry.objects.get(id=pk)
+    x = {}
+    x['certain_event_entry'] = certain_event_entry
+    
+    return render(request, 'main/event_entry_detail.html', x)
 
 # Create your views here.

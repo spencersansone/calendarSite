@@ -14,11 +14,11 @@
             </tr>
         </thead>
         <tbody>
-            {% for event in event_entries %}
+            {% for event_entry in event_entries %}
             <tr>
-                <td>{{event.event.title}}</td>
-                <td>{{event.event.start_time}}</td>
-                <td>{{event.event.end_time}}</td>
+                <td><a href="{% url 'main:event_entry_detail' pk=event_entry.id %}">{{event_entry.event.title}}</a></td>
+                <td>{{event_entry.event.start_time}}</td>
+                <td>{{event_entry.event.end_time}}</td>
             </tr>
             {% endfor %}
         </tbody>
