@@ -54,6 +54,9 @@ def add_event(request):
     
     
     if request.method == "POST":
+        print(request.POST)
+        add_another = request.POST.get('add_another')
+        print(add_another)
         t = request.POST.get('title')
         print(t)
         d = request.POST.get('description')
@@ -114,6 +117,12 @@ def add_event(request):
             thursday = thu,
             friday = fri,
             saturday = sat)
+            
+        if add_another == "yes":
+            x = {}
+            x['success_message'] = "Event Added!"
+            return render(request, 'main/add_event.html', x)
+        
         
         # return render(request, 'main/event_list.html')
         return HttpResponseRedirect(reverse('main:event_list'))

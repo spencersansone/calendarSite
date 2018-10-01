@@ -85,6 +85,11 @@
             $("#end_date").val($(this).val());
         });
         
+        $( "#add_another_button" ).click(function() {
+            $("#add_another").val("yes");
+            $("form").submit();
+        });
+        
         
         // $("#start_time").change(function () {
             
@@ -117,6 +122,11 @@
 </script>
 
 <div class="col-sm-12">
+    {% if success_message %}
+    <div class="alert alert-success" role="alert">
+      {{success_message}}
+    </div>
+    {% endif %}
     <form role="form" action="{% url 'main:add_event' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
@@ -207,6 +217,8 @@
         
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" id="add_another_button" class="btn btn-primary">Submit and Add Another</button>
+            <input type="hidden" id="add_another" name="add_another" value="no">
         </div>
         
         
