@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block title %}ENTERTITLEHERE{% endblock %}
+
+{% block body %}
+{% for a in l %}
+<div class="col-sm-4" style="border: 1px solid white;border-radius:5px;">
+    <h1 style="text-align:center;">{{a.0}}</h1>
+    <table class="table table-light" style="color:black;">
+        <thead>
+            <tr>
+                <th scope="col">Event</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if a.1|length == 0%}
+        <tr>
+            <!--<td style="text-align:center;"></td>-->
+            <td colspan="3" style="text-align:center;">None</td>
+        </tr>
+        {% else %}
+            {% for b in a.1 %}
+            <tr>
+                <td>{{b.event.title}}</td>
+                <td>{{b.event.start_time}}</td>
+                <td>{{b.event.end_time}}</td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+
+{% endblock %}

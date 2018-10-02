@@ -31,6 +31,7 @@ def event_list(request):
     return render(request, 'main/event_list.html', x)
     
 def add_event(request):
+    # standard time variable function
     def sanitize_time(var):
         if 'am' in var or 'pm' in var:
             split = var.split(':')
@@ -52,43 +53,24 @@ def add_event(request):
         return var
     
     
-    
+    # post data action
     if request.method == "POST":
-        print(request.POST)
         add_another = request.POST.get('add_another')
-        print(add_another)
         t = request.POST.get('title')
-        print(t)
         d = request.POST.get('description')
-        print(d)
         l = request.POST.get('location')
-        print(l)
         s_d = request.POST.get('start_date')
-        print(s_d)
         s_t = request.POST.get('start_time')
-        print(s_t)
-        print("{} CLEAN start".format(sanitize_time(s_t)))
         e_d = request.POST.get('end_date')
-        print(e_d)
         e_t = request.POST.get('end_time')
-        print(e_t)
-        print("{} CLEAN end".format(sanitize_time(e_t)))
-        no_repeat = True if request.POST.get('no_repeat') == "on" else False
-        print("no rep?")
-        print(no_repeat)
-        yes_repeat = True if request.POST.get('yes_repeat') == "on" else False
-        print("yes rep?")
-        print(yes_repeat)
         
-        r_e = False
-        sun = False
-        mon = False
-        tue = False
-        wed = False
-        thu = False
-        fri = False
-        sat = False
-        if yes_repeat:
+        repeat_event = True if request.POST.get('yes_repeat') == "on" else False
+        
+        # no_repeat = True if request.POST.get('no_repeat') == "on" else False
+        # yes_repeat = True if request.POST.get('yes_repeat') == "on" else False
+
+
+        if repeat_event:
             r_e = True
             sun = True if request.POST.get('sunday') == "on" else False
             mon = True if request.POST.get('monday') == "on" else False
@@ -97,11 +79,17 @@ def add_event(request):
             thu = True if request.POST.get('thursday') == "on" else False
             fri = True if request.POST.get('friday') == "on" else False
             sat = True if request.POST.get('saturday') == "on" else False
+        else:
+            r_e = False
+            sun = False
+            mon = False
+            tue = False
+            wed = False
+            thu = False
+            fri = False
+            sat = False
 
-        
-        
-        
-        Event.objects.create(
+        fresh_event = Event.objects.create(
             title = t,
             description = d,
             location = l,
@@ -118,6 +106,64 @@ def add_event(request):
             friday = fri,
             saturday = sat)
             
+        # create entries as appropriate
+        creation_datetime = getTodayDateTime()
+        # if repeat event, then make 30 days worth of entries for event
+        if repeat_event:
+            today_date = getTodayDate()
+            loop_date = today_date
+            
+            
+            # acceptable weekday values
+            acceptable_weekdays = []
+            if sun:
+                acceptable_weekdays += [6]
+            elif mon:
+                acceptable_weekdays += [0]
+            elif tue:
+                acceptable_weekdays += [1]
+            elif wed:
+                acceptable_weekdays += [2]
+            elif thu:
+                acceptable_weekdays += [3]
+            elif fri:
+                acceptable_weekdays += [4]
+            elif sat:
+                acceptable_weekdays += [5]
+            
+            count = 0
+            
+            while count < 30:
+                # is the loop_date on a weekday that matches the event's?
+                loop_weekday = getWeekdayArray()[loop_date.weekday()]
+                if loop_weekday in acceptable_weekdays:
+                    EventEntry.objects.create(
+                        event = fresh_event,
+                        start_date = loop_date,
+                        datetime_created = creation_datetime,
+                        completed = False)
+                    count += 1
+        else:
+            EventEntry.objects.create(
+                event = fresh_event,
+                start_date = fresh_event.start_date,
+                datetime_created = creation_datetime,
+                completed = False)
+                
+                
+                
+            
+            # for i in range(0,30):
+            #     EventEntry.objects.create(
+            #         event = fresh_event
+            #         #start_date needs to be taken from an array
+            #         start_date = 
+            #         datetime_created = 
+            #         completed = 
+            #     )
+            
+        
+            
         if add_another == "yes":
             x = {}
             x['success_message'] = "Event Added!"
@@ -130,9 +176,6 @@ def add_event(request):
     return render(request, 'main/add_event.html')
     
 def today_agenda(request):
-    
-
-
     today = getTodayDateTime()
     today_weekday = getWeekdayArray()[today.weekday()]
     query1 = Q(**{today_weekday: True})
@@ -217,5 +260,29 @@ def event_entry_detail(request, pk):
     x['certain_event_entry'] = certain_event_entry
     
     return render(request, 'main/event_entry_detail.html', x)
+    
+def week_agenda(request):
+    today_date = getTodayDate()
+    today_string = today_date.strftime("%Y-%m-%d")
+    week_ahead_date = today_date + timedelta(days=7)
+    week_ahead_string = week_ahead_date.strftime("%Y-%m-%d")
+    
+    week_event_entries = EventEntry.objects.filter(
+        event__start_date__range=[today_string, week_ahead_string])
+    
+    l = []
+    loop_date = today_date
+    while loop_date < week_ahead_date:
+        loop_weekday = getWeekdayArray()[loop_date.weekday()].capitalize()
+        # list of event entries
+        loop_event_entries = week_event_entries.filter(
+            event__start_date = loop_date).order_by('event__start_date')
+        
+        l += [[loop_weekday,loop_event_entries]]
+        loop_date += timedelta(days=1)
+    
+    x = {}
+    x['l'] = l
+    return render(request, 'main/week_agenda.html', x)
 
 # Create your views here.
