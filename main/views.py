@@ -176,6 +176,7 @@ def add_event(request):
 
 def add_multi_event(request):
     if request.method == 'POST':
+        creation_datetime = getTodayDateTime()
         raw_data = request.POST.get('data')
         data = eval(raw_data)
         
@@ -197,6 +198,12 @@ def add_multi_event(request):
                 thursday = False,
                 friday = False,
                 saturday = False)
+                
+            EventEntry.objects.create(
+                event = new_event,
+                start_date = new_event.start_date,
+                datetime_created = creation_datetime,
+                completed = False)
             new_events += [new_event]
         x = {}
         x['success_message'] = "Events Added!"
