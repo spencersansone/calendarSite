@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Events{% endblock %}
+
+{% block body %}
+<div class="col-sm-12">
+    {% if success_message %}
+    <div class="alert alert-success" role="alert">
+      {{success_message}}
+    </div>
+    {% endif %}
+    <form role="form" action="{% url 'main:add_multi_event' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="description">Data:</label>
+            <textarea class="form-control" name="data" rows="10" placeholder="Enter data"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

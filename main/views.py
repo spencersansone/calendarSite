@@ -69,7 +69,14 @@ def add_event(request):
         # no_repeat = True if request.POST.get('no_repeat') == "on" else False
         # yes_repeat = True if request.POST.get('yes_repeat') == "on" else False
 
-
+        r_e = False
+        sun = False
+        mon = False
+        tue = False
+        wed = False
+        thu = False
+        fri = False
+        sat = False
         if repeat_event:
             r_e = True
             sun = True if request.POST.get('sunday') == "on" else False
@@ -79,15 +86,6 @@ def add_event(request):
             thu = True if request.POST.get('thursday') == "on" else False
             fri = True if request.POST.get('friday') == "on" else False
             sat = True if request.POST.get('saturday') == "on" else False
-        else:
-            r_e = False
-            sun = False
-            mon = False
-            tue = False
-            wed = False
-            thu = False
-            fri = False
-            sat = False
 
         fresh_event = Event.objects.create(
             title = t,
@@ -143,6 +141,7 @@ def add_event(request):
                         datetime_created = creation_datetime,
                         completed = False)
                     count += 1
+                    print(count)
         else:
             EventEntry.objects.create(
                 event = fresh_event,
@@ -174,7 +173,36 @@ def add_event(request):
         return HttpResponseRedirect(reverse('main:event_list'))
         
     return render(request, 'main/add_event.html')
-    
+
+def add_multi_event(request):
+    if request.method == 'POST':
+        raw_data = request.POST.get('data')
+        data = eval(raw_data)
+        
+        new_events = []
+        for i in data:
+            new_event = Event.objects.create(
+                title = i[0],
+                description = i[1],
+                location = i[2],
+                start_date = i[3],
+                start_time = i[4],
+                end_date = i[5],
+                end_time = i[6],
+                repeat_event = False,
+                sunday = False,
+                monday = False,
+                tuesday = False,
+                wednesday = False,
+                thursday = False,
+                friday = False,
+                saturday = False)
+            new_events += [new_event]
+        x = {}
+        x['success_message'] = "Events Added!"
+        return render(request, 'main/add_multi_event.html', x)
+    return render(request, 'main/add_multi_event.html')
+
 def today_agenda(request):
     today = getTodayDateTime()
     today_weekday = getWeekdayArray()[today.weekday()]
