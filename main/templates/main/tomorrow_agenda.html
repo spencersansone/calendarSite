@@ -14,7 +14,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for event_entry in today_event_entries %}
+            {% for event_entry in tomorrow_event_entries %}
             <tr>
                 <td><a href="{% url 'main:event_entry_detail' pk=event_entry.id %}">{{event_entry.event.title}}</a></td>
                 <td>{{event_entry.event.start_time}}</td>

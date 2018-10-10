@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^add_event/$', views.add_event, name='add_event'),
     url(r'^add_multi_event/$', views.add_multi_event, name='add_multi_event'),
     url(r'^today_agenda/$', views.today_agenda, name='today_agenda'),
+    url(r'^tomorrow_agenda/$', views.tomorrow_agenda, name='tomorrow_agenda'),
     url(r'^week_agenda/$', views.week_agenda, name='week_agenda'),
     url(r'^event_entry_detail/(?P<pk>[0-9]+)/$', views.event_entry_detail, name='event_entry_detail'),
 ]

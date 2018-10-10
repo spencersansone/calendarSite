@@ -221,83 +221,123 @@ def add_multi_event(request):
         return render(request, 'main/add_multi_event.html', x)
     return render(request, 'main/add_multi_event.html')
 
-def today_agenda(request):
-    today = getTodayDateTime()
-    today_weekday = getWeekdayArray()[today.weekday()]
-    query1 = Q(**{today_weekday: True})
-    query2 = Q(start_date=today)
-    today_events = Event.objects.filter( query1 | query2 )
+# def today_agenda(request):
+#     today = getTodayDateTime()
+#     today_weekday = getWeekdayArray()[today.weekday()]
+#     query1 = Q(**{today_weekday: True})
+#     query2 = Q(start_date=today)
+#     today_events = Event.objects.filter( query1 | query2 )
     
-    for event in today_events:
-        today_event_entries = EventEntry.objects.filter(
-            event = event,
-            datetime_created__year = today.year,
-            datetime_created__month = today.month,
-            datetime_created__day = today.day)
+#     for event in today_events:
+#         today_event_entries = EventEntry.objects.filter(
+#             event = event,
+#             datetime_created__year = today.year,
+#             datetime_created__month = today.month,
+#             datetime_created__day = today.day)
         
-        if len(today_event_entries) == 0:
-            event_entry = EventEntry.objects.create(
-                event = event,
-                datetime_created = today,
-                completed = False,
-                start_date = today)
+#         if len(today_event_entries) == 0:
+#             event_entry = EventEntry.objects.create(
+#                 event = event,
+#                 datetime_created = today,
+#                 completed = False,
+#                 start_date = today)
                 
-    routine_events = Event.objects.filter(repeat_event=True)
+#     routine_events = Event.objects.filter(repeat_event=True)
     
 
     
-    t = getTodayDate()
-    x = t - timedelta(days=365)
-    dates = []
-    while x <= t:
-        dates += [x]
-        x += timedelta(days=1)
+#     t = getTodayDate()
+#     x = t - timedelta(days=365)
+#     dates = []
+#     while x <= t:
+#         dates += [x]
+#         x += timedelta(days=1)
         
-    all_event_entries = EventEntry.objects.all()
-    for event in routine_events:
-        weekday_list = []
+#     all_event_entries = EventEntry.objects.all()
+#     for event in routine_events:
+#         weekday_list = []
         
-        if event.monday:
-            weekday_list += [0]
-        if event.tuesday:
-            weekday_list += [1]
-        if event.wednesday:
-            weekday_list += [2]
-        if event.thursday:
-            weekday_list += [3]
-        if event.friday:
-            weekday_list += [4]
-        if event.saturday:
-            weekday_list += [5]
-        if event.sunday:
-            weekday_list += [6]
-        relevant_dates = []
-        for date in dates:
-            if date.weekday() in weekday_list:
-                same_entries = all_event_entries.filter(
-                    event = event,
-                    start_date = date)
-                if len(same_entries) == 0:
-                    EventEntry.objects.create(
-                        event = event,
-                        datetime_created = today,
-                        completed = False,
-                        start_date = date)
-        print(relevant_dates)
+#         if event.monday:
+#             weekday_list += [0]
+#         if event.tuesday:
+#             weekday_list += [1]
+#         if event.wednesday:
+#             weekday_list += [2]
+#         if event.thursday:
+#             weekday_list += [3]
+#         if event.friday:
+#             weekday_list += [4]
+#         if event.saturday:
+#             weekday_list += [5]
+#         if event.sunday:
+#             weekday_list += [6]
+#         relevant_dates = []
+#         for date in dates:
+#             if date.weekday() in weekday_list:
+#                 same_entries = all_event_entries.filter(
+#                     event = event,
+#                     start_date = date)
+#                 if len(same_entries) == 0:
+#                     EventEntry.objects.create(
+#                         event = event,
+#                         datetime_created = today,
+#                         completed = False,
+#                         start_date = date)
+#         print(relevant_dates)
             
         
 
 
 
-    x = {}
-    # x['event_entries'] = EventEntry.objects.filter(
-    #     datetime_created__year = today.year,
-    #     datetime_created__month = today.month,
-    #     datetime_created__day = today.day).order_by('event__start_time')
-    x['event_entries'] = EventEntry.objects.filter(
-        start_date = today).order_by('event__start_time')
+#     x = {}
+#     # x['event_entries'] = EventEntry.objects.filter(
+#     #     datetime_created__year = today.year,
+#     #     datetime_created__month = today.month,
+#     #     datetime_created__day = today.day).order_by('event__start_time')
+#     x['event_entries'] = EventEntry.objects.filter(
+#         start_date = today).order_by('event__start_time')
     
+#     return render(request, 'main/today_agenda.html', x)
+
+def today_agenda(request):
+    today_date = getTodayDate()
+    today_weekday = getWeekdayArray()[today_date.weekday()]
+    
+    # today_nonroutine_event_entries
+    query1 = Q(date = today_date)
+    t_nr_e_e = EventEntry.objects.filter(query1)
+    
+    # today_routine_event_entries
+    query2 = Q(**{'event__'+today_weekday:True})
+    t_r_e_e = EventEntry.objects.filter(query1 & query2)
+    
+    # all_today_event_entries
+    a_t_e_e = t_r_e_e | t_nr_e_e
+    print(a_t_e_e)
+    
+    x = {}
+    x['today_event_entries'] = a_t_e_e
     return render(request, 'main/today_agenda.html', x)
+    
+def tomorrow_agenda(request):
+    tomorrow_date = getTodayDate() + timedelta(days=1)
+    tomorrow_weekday = getWeekdayArray()[tomorrow_date.weekday()]
+    
+    # tomorrow_nonroutine_event_entries
+    query1 = Q(date = tomorrow_date)
+    t_nr_e_e = EventEntry.objects.filter(query1)
+    
+    # tomorrow_routine_event_entries
+    query2 = Q(**{'event__'+tomorrow_weekday:True})
+    t_r_e_e = EventEntry.objects.filter(query1 & query2)
+    
+    # all_tomorrow_event_entries
+    a_t_e_e = t_r_e_e | t_nr_e_e
+    
+    x = {}
+    x['tomorrow_event_entries'] = a_t_e_e
+    return render(request, 'main/tomorrow_agenda.html', x)
+
     
 def event_entry_detail(request, pk):
     
@@ -320,7 +360,7 @@ def week_agenda(request):
     l = []
     loop_date = today_date
     while loop_date < week_ahead_date:
-        loop_weekday = weekday_array[loop_date.weekday()]
+        loop_weekday = getWeekdayArray()[loop_date.weekday()]
         
         # loop_nonroutine_event_entries
         query1 = Q(date = loop_date)
