@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
 from datetime import datetime, date, timedelta
+from time import sleep
+from django.db.models import Q
 
 def getTodayDateTime():
     return datetime.now()
@@ -64,7 +66,11 @@ def add_event(request):
         e_d = request.POST.get('end_date')
         e_t = request.POST.get('end_time')
         
+        print(request.POST)
+        
         repeat_event = True if request.POST.get('yes_repeat') == "on" else False
+        
+        print(1)
         
         # no_repeat = True if request.POST.get('no_repeat') == "on" else False
         # yes_repeat = True if request.POST.get('yes_repeat') == "on" else False
@@ -86,6 +92,8 @@ def add_event(request):
             thu = True if request.POST.get('thursday') == "on" else False
             fri = True if request.POST.get('friday') == "on" else False
             sat = True if request.POST.get('saturday') == "on" else False
+            
+        print(sun,mon,tue,wed,thu,fri,sat)
 
         fresh_event = Event.objects.create(
             title = t,
@@ -106,6 +114,7 @@ def add_event(request):
             
         # create entries as appropriate
         creation_datetime = getTodayDateTime()
+        print(3)
         # if repeat event, then make 30 days worth of entries for event
         if repeat_event:
             today_date = getTodayDate()
@@ -115,39 +124,41 @@ def add_event(request):
             # acceptable weekday values
             acceptable_weekdays = []
             if sun:
-                acceptable_weekdays += [6]
-            elif mon:
-                acceptable_weekdays += [0]
-            elif tue:
-                acceptable_weekdays += [1]
-            elif wed:
-                acceptable_weekdays += [2]
-            elif thu:
-                acceptable_weekdays += [3]
-            elif fri:
-                acceptable_weekdays += [4]
-            elif sat:
-                acceptable_weekdays += [5]
+                acceptable_weekdays += [getWeekdayArray()[6]]
+            if mon:
+                acceptable_weekdays += [getWeekdayArray()[0]]
+            if tue:
+                acceptable_weekdays += [getWeekdayArray()[1]]
+            if wed:
+                acceptable_weekdays += [getWeekdayArray()[2]]
+            if thu:
+                acceptable_weekdays += [getWeekdayArray()[3]]
+            if fri:
+                acceptable_weekdays += [getWeekdayArray()[4]]
+            if sat:
+                acceptable_weekdays += [getWeekdayArray()[5]]
+            print(acceptable_weekdays)
             
             count = 0
-            
+            print('enter loop...')
             while count < 30:
                 # is the loop_date on a weekday that matches the event's?
                 loop_weekday = getWeekdayArray()[loop_date.weekday()]
+                print(loop_weekday)
+                print('loop wd',loop_weekday,'days',acceptable_weekdays)
                 if loop_weekday in acceptable_weekdays:
                     EventEntry.objects.create(
                         event = fresh_event,
-                        start_date = loop_date,
-                        datetime_created = creation_datetime,
-                        completed = False)
+                        date = loop_date)
                     count += 1
-                    print(count)
+                print(count)
+                loop_date += timedelta(days=1)
+                # sleep(5)
+            print('loop done')
         else:
             EventEntry.objects.create(
                 event = fresh_event,
-                start_date = fresh_event.start_date,
-                datetime_created = creation_datetime,
-                completed = False)
+                date = fresh_event.start_date)
                 
                 
                 
@@ -297,6 +308,7 @@ def event_entry_detail(request, pk):
     return render(request, 'main/event_entry_detail.html', x)
     
 def week_agenda(request):
+    weekday_array = getWeekdayArray()
     today_date = getTodayDate()
     today_string = today_date.strftime("%Y-%m-%d")
     week_ahead_date = today_date + timedelta(days=7)
@@ -308,12 +320,20 @@ def week_agenda(request):
     l = []
     loop_date = today_date
     while loop_date < week_ahead_date:
-        loop_weekday = getWeekdayArray()[loop_date.weekday()].capitalize()
-        # list of event entries
-        loop_event_entries = week_event_entries.filter(
-            event__start_date = loop_date).order_by('event__start_date')
+        loop_weekday = weekday_array[loop_date.weekday()]
         
-        l += [[loop_weekday,loop_event_entries]]
+        # loop_nonroutine_event_entries
+        query1 = Q(date = loop_date)
+        l_nr_e_e = EventEntry.objects.filter(query1)
+        
+        # loop_routine_event_entries
+        query2 = Q(**{'event__'+loop_weekday:True})
+        l_r_e_e = EventEntry.objects.filter(query1 & query2)
+        
+        # all_loop_event_entries
+        a_l_e_e = l_r_e_e | l_nr_e_e
+        
+        l += [[loop_weekday.capitalize(),a_l_e_e]]
         loop_date += timedelta(days=1)
     
     x = {}
