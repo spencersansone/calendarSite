@@ -85,11 +85,15 @@
             $("#end_date").val($(this).val());
         });
         
-        $( "#add_another_button" ).click(function() {
+        $("#add_another_button" ).click(function() {
             $("#add_another").val("yes");
             $("form").submit();
         });
         
+        setTimeout(function() {
+            $("#success_message").hide('blind', {}, 500)
+        }, 5000);
+	});
         
         // $("#start_time").change(function () {
             
@@ -118,12 +122,13 @@
         //     }
             
         // });
-    });
+    
+
 </script>
 
 <div class="col-sm-12">
     {% if success_message %}
-    <div class="alert alert-success" role="alert">
+    <div id="success_message" class="alert alert-success" role="alert">
       {{success_message}}
     </div>
     {% endif %}
