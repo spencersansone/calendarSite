@@ -53,7 +53,6 @@
                     end_time_hour = "00";
                 }
                 var end_time = end_time_hour + ":" + start_time_minute;
-                alert(end_time)
                 $('#end_time').val(end_time);
             } else {
                 var start_time = $(this).val();
@@ -93,6 +92,7 @@
         setTimeout(function() {
             $("#success_message").hide('blind', {}, 500)
         }, 5000);
+
 	});
         
         // $("#start_time").change(function () {
