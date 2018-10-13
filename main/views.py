@@ -61,9 +61,8 @@ def add_event(request):
         t = request.POST.get('title')
         d = request.POST.get('description')
         l = request.POST.get('location')
-        s_d = request.POST.get('start_date')
+        s_d = request.POST.get('date')
         s_t = request.POST.get('start_time')
-        e_d = request.POST.get('end_date')
         e_t = request.POST.get('end_time')
         
         print(request.POST)
@@ -99,9 +98,8 @@ def add_event(request):
             title = t,
             description = d,
             location = l,
-            start_date = s_d,
+            date = s_d,
             start_time = sanitize_time(s_t),
-            end_date = e_d,
             end_time = sanitize_time(e_t),
             repeat_event = r_e,
             sunday = sun,
@@ -158,7 +156,7 @@ def add_event(request):
         else:
             EventEntry.objects.create(
                 event = fresh_event,
-                date = fresh_event.start_date)
+                date = fresh_event.date)
                 
                 
                 
@@ -197,9 +195,8 @@ def add_multi_event(request):
                 title = i[0],
                 description = i[1],
                 location = i[2],
-                start_date = i[3],
+                date = i[3],
                 start_time = i[4],
-                end_date = i[5],
                 end_time = i[6],
                 repeat_event = False,
                 sunday = False,
@@ -212,7 +209,7 @@ def add_multi_event(request):
                 
             EventEntry.objects.create(
                 event = new_event,
-                start_date = new_event.start_date,
+                date = new_event.date,
                 datetime_created = creation_datetime,
                 completed = False)
             new_events += [new_event]
@@ -355,7 +352,7 @@ def week_agenda(request):
     week_ahead_string = week_ahead_date.strftime("%Y-%m-%d")
     
     week_event_entries = EventEntry.objects.filter(
-        event__start_date__range=[today_string, week_ahead_string])
+        event__date__range=[today_string, week_ahead_string])
     
     l = []
     loop_date = today_date
