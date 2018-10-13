@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Event Entry Detail{% endblock %}
+
+{% block body %}
+<div class="col-sm-12">
+    <a href="{% url 'main:delete_event_entry' pk=certain_event_entry.id %}"><h1>Delete</h1></a>
+    <h1>Entry Details</h1>
+    <h2>Start Date: {{certain_event_entry.start_date}}</h2>
+    <h2>Date Created: {{certain_event_entry.datetime_created}}</h2>
+    <h2>Completed? {{certain_event_entry.completed}}</h2>
+    <br>
+    <h1>Event Details</h1>
+    <h2>Title: {{certain_event_entry.event.title}}</h2>
+    <h2>Description: {{certain_event_entry.event.description}}</h2>
+    <h2>Location: {{certain_event_entry.event.location}}</h2>
+    <h2>Start Date: {{certain_event_entry.event.start_date}}</h2>
+    <h2>End Date: {{certain_event_entry.event.end_date}}</h2>
+    <h2>Start Time: {{certain_event_entry.event.start_time}}</h2>
+    <h2>End Time: {{certain_event_entry.event.end_time}}</h2>
+    <h2>Repeat Event?: {{certain_event_entry.event.repeat_event}}</h2>
+    <h2>Sunday: {{certain_event_entry.event.sunday}}</h2>
+    <h2>Monday: {{certain_event_entry.event.monday}}</h2>
+    <h2>Tuesday: {{certain_event_entry.event.tuesday}}</h2>
+    <h2>Wednesday: {{certain_event_entry.event.wednesday}}</h2>
+    <h2>Thursday: {{certain_event_entry.event.thursday}}</h2>
+    <h2>Friday: {{certain_event_entry.event.friday}}</h2>
+    <h2>Saturday: {{certain_event_entry.event.saturday}}</h2>
+</div>
+{% endblock %}

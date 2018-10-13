@@ -337,8 +337,16 @@ def tomorrow_agenda(request):
 
     
 def event_entry_detail(request, pk):
-    
     certain_event_entry = EventEntry.objects.get(id=pk)
+    print('https://'+request.META['HTTP_HOST']+reverse('main:home'))
+    if request.is_ajax():
+        if 'delete_event' in request.POST:
+            certain_event_entry.event.delete()
+            
+            return HttpResponse('https://'+request.META['HTTP_HOST']+reverse('main:home'))
+
+            
+    
     x = {}
     x['certain_event_entry'] = certain_event_entry
     
@@ -376,5 +384,11 @@ def week_agenda(request):
     x = {}
     x['l'] = l
     return render(request, 'main/week_agenda.html', x)
+    
+def delete_event_entry(request, pk):
+    
+            
+    return render(request, 'main/delete_event_entry.html')
+    
 
 # Create your views here.

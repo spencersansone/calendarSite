@@ -3,27 +3,86 @@
 {% block title %}Event Entry Detail{% endblock %}
 
 {% block body %}
+<script>
+    var pk = {{certain_event_entry.id}};
+</script>
+<script type="text/javascript">
+    $(function(){
+        var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+        $('[data-toggle="popover"]').popover();
+        
+        $("body").on('click', '#confirm_delete_entry_button', function () {
+          
+        });
+        
+        $("body").on('click', '#confirm_delete_event_button', function () {
+            console.log('trying...'+pk)
+            $.ajax({
+                type: 'POST',
+                url: '/event_entry_detail/'+pk+'/',
+                data: {
+                  delete_event: true,
+                  csrfmiddlewaretoken : csrf_token
+                },
+                success: function(response){
+                    window.location.href = response;
+                }
+            });
+        });
+        
+        $("body").on('click', '#confirm_cancel_button', function () {
+          $("[data-toggle='popover']").popover('hide');
+        });
+    });
+</script>
+
+{% csrf_token %}
+
 <div class="col-sm-12">
-    <h1>Entry Details</h1>
-    <h2>Start Date: {{certain_event_entry.start_date}}</h2>
-    <h2>Date Created: {{certain_event_entry.datetime_created}}</h2>
-    <h2>Completed? {{certain_event_entry.completed}}</h2>
     <br>
-    <h1>Event Details</h1>
-    <h2>Title: {{certain_event_entry.event.title}}</h2>
-    <h2>Description: {{certain_event_entry.event.description}}</h2>
-    <h2>Location: {{certain_event_entry.event.location}}</h2>
-    <h2>Start Date: {{certain_event_entry.event.start_date}}</h2>
-    <h2>End Date: {{certain_event_entry.event.end_date}}</h2>
-    <h2>Start Time: {{certain_event_entry.event.start_time}}</h2>
-    <h2>End Time: {{certain_event_entry.event.end_time}}</h2>
-    <h2>Repeat Event?: {{certain_event_entry.event.repeat_event}}</h2>
-    <h2>Sunday: {{certain_event_entry.event.sunday}}</h2>
-    <h2>Monday: {{certain_event_entry.event.monday}}</h2>
-    <h2>Tuesday: {{certain_event_entry.event.tuesday}}</h2>
-    <h2>Wednesday: {{certain_event_entry.event.wednesday}}</h2>
-    <h2>Thursday: {{certain_event_entry.event.thursday}}</h2>
-    <h2>Friday: {{certain_event_entry.event.friday}}</h2>
-    <h2>Saturday: {{certain_event_entry.event.saturday}}</h2>
+    <button 
+    type="button"
+    id="delete_button"
+    class="btn btn-lg btn-block btn-danger" 
+    data-toggle="popover"
+    data-placement="bottom"
+    {% if certain_event_entry.event.repeat_event %}
+    title="<p style='color:black;'>Are you sure you want to delete {{certain_event_entry.event.title}}?</p>" 
+    data-content="
+        <button type='button' id='confirm_delete_entry_button' class='btn btn-danger'>Delete This Entry</button>
+        <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete Event Entirely</button>
+        <button type='button' id='confirm_cancel_button' class='btn btn-secondary'>Cancel</button>" 
+    data-html="true">Delete</button>
+    {% else %}
+    title="<p style='color:black;'>Are you sure you want to delete {{certain_event_entry.event.title}}?</p>" 
+    data-content="
+        <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete Event</button>
+        <button type='button' id='confirm_cancel_button' class='btn btn-secondary'>Cancel</button>" 
+    data-html="true">Delete</button>
+    {% endif %}
+    <br>
+
+        
+        
+    <div class="card" style="color:black;text-align:center;">
+        <div class="card-header">
+            <h4>Title: {{certain_event_entry.event.title}}</h4>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h5>Location: {{certain_event_entry.event.location}}</h5></li>
+            {% if certain_event_entry.event.repeat_event %}
+            <li class="list-group-item"><h5>Date: {{certain_event_entry.date}}</h5></li>
+            <li class="list-group-item"><h6>Repeat Event?: Yes</h6></li>
+            <li class="list-group-item"><h6>Mon Wed Fri</h6</li>
+            {% else %}
+            <li class="list-group-item"><h5>Date: {{certain_event_entry.event.date}}</h5></li>
+            {% endif %}
+            <li class="list-group-item"><h6>Start Time: {{certain_event_entry.event.start_time}}</h6></li>
+            <li class="list-group-item"><h6>End Time: {{certain_event_entry.event.end_time}}</h6></li>
+            <li class="list-group-item"><h6>Description:</h6><textarea disabled class="form-control" style="background-color:#FFF;">{{certain_event_entry.event.description}}</textarea></li>
+        </ul>
+    </div>
+    
+    
 </div>
 {% endblock %}
