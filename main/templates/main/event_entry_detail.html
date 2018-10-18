@@ -49,15 +49,19 @@
     {% if certain_event_entry.event.repeat_event %}
     title="<p style='color:black;'>Are you sure you want to delete {{certain_event_entry.event.title}}?</p>" 
     data-content="
-        <button type='button' id='confirm_delete_entry_button' class='btn btn-danger'>Delete This Entry</button>
-        <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete Event Entirely</button>
-        <button type='button' id='confirm_cancel_button' class='btn btn-secondary'>Cancel</button>" 
+        <div class='btn-group-vertical' style='margin: 0 auto;'>
+            <button type='button' id='confirm_cancel_button' class='btn btn-secondary'>Cancel</button>
+            <button type='button' id='confirm_delete_entry_button' class='btn btn-danger'>Delete This Entry</button>
+            <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete Event Entirely</button>
+        </div>" 
     data-html="true">Delete</button>
     {% else %}
     title="<p style='color:black;'>Are you sure you want to delete {{certain_event_entry.event.title}}?</p>" 
     data-content="
-        <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete Event</button>
-        <button type='button' id='confirm_cancel_button' class='btn btn-secondary'>Cancel</button>" 
+        <div class='btn-group-vertical'>
+            <button type='button' id='confirm_cancel_button' class='btn btn-block btn-secondary'>Cancel</button>
+            <button type='button' id='confirm_delete_event_button' class='btn btn-block btn-danger'>Delete Event</button>
+        </div>"
     data-html="true">Delete</button>
     {% endif %}
     <br>

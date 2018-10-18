@@ -19,22 +19,17 @@
         }
         var today_string = year + '-' + month + '-' + day;
         
-        if (is_mobile){
-            $('#start_time_form').append('<label for="start_time">Start Time:</label><input type="time" class="form-control" name="start_time" id="start_time">');
-            $('#end_time_form').append('<label for="end_time">End Time:</label><input type="time" class="form-control" name="end_time" id="end_time">');
-        } else {
-            $('#start_time_form').append('<label for="start_time">Start Time:</label><input type="text" class="form-control timepicker" name="start_time" id="start_time" placeholder="Enter start time">');
-            $('#end_time_form').append('<label for="end_time">End Time:</label><input type="text" class="form-control timepicker" name="end_time" id="end_time">');
-            $('#start_time').timepicker();
-            $('#end_time').timepicker();
-        }
+        $('#start_time_form').append('<label for="start_time">Start Time:</label><input type="time" class="form-control" name="start_time" id="start_time">');
+        $('#end_time_form').append('<label for="end_time">End Time:</label><input type="time" class="form-control" name="end_time" id="end_time">');
         $('#date').val(today_string);
+        
         $("#yes_repeat").change(function () {
             $('#no_repeat').prop('checked', false);
             $("#yes_repeat").parent().removeClass('btn-secondary').addClass('btn-success')
             $('#repeat_div').show()
             $('#no_repeat').parent().removeClass('btn-danger').addClass('btn-secondary')
         });
+        
         $("#no_repeat").change(function () {
             $('#yes_repeat').prop('checked', false);
             $("#no_repeat").parent().removeClass('btn-secondary').addClass('btn-danger')
@@ -43,185 +38,19 @@
         });
         
         $("#start_time").change(function () {
-            if(is_mobile){
-                // alert($(this).val());
-                var start_time = $(this).val();
-                var start_time_split = start_time.split(':');
-                var start_time_hour = parseInt(start_time_split[0]);
-                var start_time_minute = start_time_split[1];
-                var end_time_hour = (start_time_hour + 1) % 24;
-                if (end_time_hour == 0){
-                    end_time_hour = "00";
-                }
-                var end_time = end_time_hour + ":" + start_time_minute;
-                $('#end_time').val(end_time);
-            } else {
-                var start_time = $(this).val();
-                var start_time_split = start_time.split(":");
-                var start_time_hour = parseInt(start_time_split[0]);
-                var start_time_minute = start_time_split[1].substring(0,2);
-                var start_time_meridiem = start_time_split[1].substring(2,4);
-                var end_time_hour = (start_time_hour + 1) % 12;
-                
-                if (end_time_hour == 0){
-                    end_time_hour = 12;
-                }
-                
-                if (end_time_hour > 11){
-                    if(start_time_meridiem == "am"){
-                        var end_time_meridiem = "pm"   
-                    } else if (start_time_meridiem == "pm") {
-                        var end_time_meridiem = "am"
-                    }
-                } else {
-                    end_time_meridiem = start_time_meridiem
-                }
-                
-                end_time = end_time_hour + ":" + start_time_minute + end_time_meridiem;
-                $('#end_time').val(end_time);
-            }
+            var start_time = $(this).val();
+            $('#end_time').val(start_time);
         });
-        // $("#date").change(function () {
-        //     $("#end_date").val($(this).val());
-        // });
         
         $("#add_another_button" ).click(function() {
             $("#add_another").val("yes");
             $("form").submit();
         });
         
-        $("#duration_min, #duration_hr").change(function () {
-            if (is_mobile){
-                var start_time = $("#start_time").val();
-                var h = start_time.substr(0,2);
-                var m = start_time.substr(3,5);
-                
-                if (h[0] = '0'){
-                    h = parseInt(h[1]);
-                } else {
-                    h = parseInt(h);
-                }
-                
-                if(m[0] == '0'){
-                    m = parseInt(m[1]);
-                } else {
-                    m = parseInt(m);
-                }
-                
-                // alert(h+" "+m);
-                
-                var date = new Date();
-                var add_h = parseInt($('#duration_hr').val());
-                var add_m = parseInt($('#duration_min').val());
-                // alert(add_h + ":" + add_m)
-                
-                var sum_h = h + add_h;
-                var sum_m = m + add_m;
-                // alert(sum_h+" "+sum_m)
-                date.setUTCHours(sum_h, sum_m, 0, 0);
-                // alert(m+" + "+add_m);
-                var new_h = parseInt(date.getUTCHours());
-                var new_m = parseInt(date.getUTCMinutes());
-                // alert(h+add_h);
-                if (new_h < 10){
-                    new_h = '0' + new_h.toString();
-                }
-                
-                var new_time = new_h + ":" + new_m;
-                // alert(new_time);
-                // alert(new_time);
-                $("#end_time").val(new_time);
-                
-            } else {
-                var time_split = $('#start_time').val().split(':');
-                var h = time_split[0];
-                var m = time_split[1].substr(0,2);
-                var mer = time_split[1].substr(2,4);
-                
-                if (mer == 'pm' && h != '12'){
-                    h = (parseInt(h) + 12);
-                } else if (mer == 'am' && h == '12'){
-                    h = 0;
-                } else {
-                    h = parseInt(h);
-                }
-                
-                if(m[0] == '0'){
-                    m = parseInt(m[1]);
-                } else {
-                    m = parseInt(m);
-                }
-                
-                
-                var date = new Date();
-                var add_h = $('#duration_hr').val();
-                var add_m = $('#duration_min').val();
-                
-                date.setUTCHours(h+add_h, m+add_m, 0, 0);
-                
-                var new_h = parseInt(date.getUTCHours());
-                var new_m = parseInt(date.getUTCMinutes());
-                
-                console.log(new_h,new_m)
-                
-                if(new_m < 10){ 
-                    new_m = "0" + new_m.toString();
-                }
-                
-    
-                if (new_h == 0){
-                    new_h = 12;
-                    new_mer = 'am';
-                } else if (new_h == 12){
-                    new_mer = 'pm';
-                } else if (new_h > 11){
-                    new_h = (new_h - 12).toString();
-                    new_mer = 'pm';
-                } else {
-                    new_mer = 'am';    
-                }
-                console.log(new_h,new_m,new_mer);
-                var new_time = new_h + ":" + new_m + new_mer;
-                $("#end_time").val(new_time);
-            }
-            
-        });
-        
         setTimeout(function() {
             $("#success_message").hide('blind', {}, 500)
         }, 5000);
-
 	});
-        
-        // $("#start_time").change(function () {
-            
-        //     if (is_mobile){
-        //         // if on mobile, then need to change to XX:XX
-                
-        //         // take start time and add 1 hr
-        //         start_time = $(this).val();
-        //         console.log(start_time)
-        //     } else {
-        //         // if not mobile, then need to change to XX:XX(am/pm)
-        //         start_time = $(this).val();
-        //         s_t_split = start_time.split(':')
-        //         var integer = (parseInt(s_t_split[0], 10) + 1) % 12;
-        //         console.log()
-        //         if(integer == 0){
-        //             integer = 12;
-        //             if(meridiem == 'am'){
-        //                 meridiem = 'pm'
-        //             } else {
-        //                 meridiem = 'am'
-        //             }
-        //         }
-        //         end_time = integer + ':' + s_t_split[1].substring(0,2) + meridiem;
-        //         $('#end_time').val(end_time);
-        //     }
-            
-        // });
-    
-
 </script>
 
 <div class="col-sm-12">
@@ -261,16 +90,16 @@
         <!--    <input type="date" class="form-control" name="end_date" id="end_date">-->
         <!--</div>-->
         
-        <div class="form-row">
-            <div class="col-md-6 mb-3">
-                <label for="test">Hours</label>
-                <input type="number" class="form-control" value=0 min=0 id="duration_hr">
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="test">Minutes</label>
-                <input type="number" class="form-control" value=0 min=0 max=59 id="duration_min">
-            </div>
-        </div>
+        <!--<div class="form-row">-->
+        <!--    <div class="col-md-6 mb-3">-->
+        <!--        <label for="test">Hours</label>-->
+        <!--        <input type="number" class="form-control" value=0 min=0 id="duration_hr">-->
+        <!--    </div>-->
+        <!--    <div class="col-md-6 mb-3">-->
+        <!--        <label for="test">Minutes</label>-->
+        <!--        <input type="number" class="form-control" value=0 min=0 max=59 id="duration_min">-->
+        <!--    </div>-->
+        <!--</div>-->
         
         <div class="form-group" id="end_time_form">
         </div>

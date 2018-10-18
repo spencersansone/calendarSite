@@ -342,14 +342,11 @@ def event_entry_detail(request, pk):
     if request.is_ajax():
         if 'delete_event' in request.POST:
             certain_event_entry.event.delete()
-            
-            return HttpResponse('https://'+request.META['HTTP_HOST']+reverse('main:home'))
-
-            
-    
+        elif 'delete_entry' in request.POST:
+            certain_event_entry.delete()
+        return HttpResponse('https://'+request.META['HTTP_HOST']+reverse('main:home'))
     x = {}
     x['certain_event_entry'] = certain_event_entry
-    
     return render(request, 'main/event_entry_detail.html', x)
     
 def week_agenda(request):
