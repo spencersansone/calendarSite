@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 class Event(models.Model):
     title = models.CharField(max_length=100)
@@ -19,5 +20,35 @@ class Event(models.Model):
 class EventEntry(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     date = models.DateField()
-
+    
+    @property
+    def current_status(self):
+        now = datetime.now()
+        
+        end_time = self.event.end_time
+        start_time = self.event.start_time
+        
+        
+        # -1 --> upcoming
+        # 0 --> current
+        # 1 --> passed
+        
+        if now.hour < start_time.hour:
+            return -1
+        elif now.hour == start_time.hour:
+            if now.minute < start_time.minute:
+                return -1
+            elif now.minute == start_time.minute:
+                return 0
+            elif now.minute > start_time.minute:
+                if now.hour < end_time.hour:
+                    return 0
+                elif now.hour == end_time.hour:
+                    if now.minute <= end_time.minute:
+                        return 0
+                    else:
+                        return 1
+        else:
+            return 1
+            
 # Create your models here.

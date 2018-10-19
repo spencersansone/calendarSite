@@ -309,11 +309,12 @@ def today_agenda(request):
     t_r_e_e = EventEntry.objects.filter(query1 & query2)
     
     # all_today_event_entries
-    a_t_e_e = t_r_e_e | t_nr_e_e
+    a_t_e_e = (t_r_e_e | t_nr_e_e).order_by('event__start_time')
     print(a_t_e_e)
     
     x = {}
     x['today_event_entries'] = a_t_e_e
+    x['today_datetime'] = getTodayDateTime()
     return render(request, 'main/today_agenda.html', x)
     
 def tomorrow_agenda(request):

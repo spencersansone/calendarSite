@@ -15,7 +15,13 @@
         </thead>
         <tbody>
             {% for event_entry in today_event_entries %}
-            <tr>
+            {% if event_entry.current_status == 1 %}
+            <tr class="table-secondary" style="color:gray;text-decoration: line-through;">
+            {% elif event_entry.current_status == 0 %}
+            <tr class="table-success" style="font-weight: bold;">
+            {% else %}
+            <tr class="table-primary">
+            {% endif %}
                 <td><a href="{% url 'main:event_entry_detail' pk=event_entry.id %}">{{event_entry.event.title}}</a></td>
                 <td>{{event_entry.event.start_time}}</td>
                 <td>{{event_entry.event.end_time}}</td>
