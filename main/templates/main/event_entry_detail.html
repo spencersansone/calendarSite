@@ -12,11 +12,22 @@
         $('[data-toggle="popover"]').popover();
         
         $("body").on('click', '#confirm_delete_entry_button', function () {
-          
+            console.log('trying...'+pk);
+            $.ajax({
+                type: 'POST',
+                url: '/event_entry_detail/'+pk+'/',
+                data: {
+                  delete_entry: true,
+                  csrfmiddlewaretoken : csrf_token
+                },
+                success: function(response){
+                    window.location.href = response;
+                }
+            });
         });
         
         $("body").on('click', '#confirm_delete_event_button', function () {
-            console.log('trying...'+pk)
+            console.log('trying...'+pk);
             $.ajax({
                 type: 'POST',
                 url: '/event_entry_detail/'+pk+'/',
@@ -49,16 +60,16 @@
     {% if certain_event_entry.event.repeat_event %}
     title="<p style='color:black;'>Are you sure you want to delete {{certain_event_entry.event.title}}?</p>" 
     data-content="
-        <div class='btn-group-vertical' style='margin: 0 auto;'>
+        <div class='btn-group-vertical' style='width:100%;'>
             <button type='button' id='confirm_cancel_button' class='btn btn-secondary'>Cancel</button>
-            <button type='button' id='confirm_delete_entry_button' class='btn btn-danger'>Delete This Entry</button>
-            <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete Event Entirely</button>
+            <button type='button' id='confirm_delete_entry_button' class='btn btn-danger'>Delete Entry</button>
+            <button type='button' id='confirm_delete_event_button' class='btn btn-danger'>Delete All Entries</button>
         </div>" 
     data-html="true">Delete</button>
     {% else %}
     title="<p style='color:black;'>Are you sure you want to delete {{certain_event_entry.event.title}}?</p>" 
     data-content="
-        <div class='btn-group-vertical'>
+        <div class='btn-group-vertical' style='width:100%;'>
             <button type='button' id='confirm_cancel_button' class='btn btn-block btn-secondary'>Cancel</button>
             <button type='button' id='confirm_delete_event_button' class='btn btn-block btn-danger'>Delete Event</button>
         </div>"
