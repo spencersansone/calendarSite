@@ -375,7 +375,7 @@ def week_agenda(request):
         # all_loop_event_entries
         a_l_e_e = l_r_e_e | l_nr_e_e
         
-        l += [[loop_weekday.capitalize(),a_l_e_e]]
+        l += [[loop_weekday.capitalize(),loop_date,a_l_e_e]]
         loop_date += timedelta(days=1)
     
     x = {}
