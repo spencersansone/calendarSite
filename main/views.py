@@ -330,7 +330,7 @@ def tomorrow_agenda(request):
     t_r_e_e = EventEntry.objects.filter(query1 & query2)
     
     # all_tomorrow_event_entries
-    a_t_e_e = t_r_e_e | t_nr_e_e
+    a_t_e_e = (t_r_e_e | t_nr_e_e).order_by('event__start_time')
     
     x = {}
     x['tomorrow_event_entries'] = a_t_e_e
@@ -367,14 +367,14 @@ def week_agenda(request):
         
         # loop_nonroutine_event_entries
         query1 = Q(date = loop_date)
-        l_nr_e_e = EventEntry.objects.filter(query1)
+        l_nr_e_e = EventEntry.objects.filter(query1).order_by('date')
         
         # loop_routine_event_entries
         query2 = Q(**{'event__'+loop_weekday:True})
-        l_r_e_e = EventEntry.objects.filter(query1 & query2)
+        l_r_e_e = EventEntry.objects.filter(query1 & query2).order_by('date')
         
         # all_loop_event_entries
-        a_l_e_e = l_r_e_e | l_nr_e_e
+        a_l_e_e = (l_r_e_e | l_nr_e_e).order_by('event__start_time')
         
         l += [[loop_weekday.capitalize(),loop_date,a_l_e_e]]
         loop_date += timedelta(days=1)
