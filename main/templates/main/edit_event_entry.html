@@ -90,11 +90,11 @@ $(document).ready(function(){
 </script>
 
 <div class="col-sm-12">
-    {% if success_message %}
-    <div id="success_message" class="alert alert-success" role="alert">
-      {{success_message}}
-    </div>
-    {% endif %}
+    <!--{% if success_message %}-->
+    <!--<div id="success_message" class="alert alert-success" role="alert">-->
+    <!--  {{success_message}}-->
+    <!--</div>-->
+    <!--{% endif %}-->
     <form role="form" action="{% url 'main:add_event' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         

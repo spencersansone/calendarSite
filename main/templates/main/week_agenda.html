@@ -3,6 +3,10 @@
 {% block title %}Week Agenda{% endblock %}
 
 {% block body %}
+<div class="col-sm-12">
+    <a class="btn btn-success btn-lg btn-block" href="{% url 'main:add_event' %}"><h1>Add Event</h1></a>
+    <br>
+</div>
 {% for a in l %}
 <div class="col-sm-4" style="border: 1px solid white;border-radius:5px;">
     <h2 style="text-align:center;">{{a.0}}</h2>
